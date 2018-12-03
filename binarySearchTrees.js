@@ -3,6 +3,30 @@
 function BST(){
 	this.root = null;
 
+	// root 10
+		 // right 20
+		    // right 25
+
+	this.rebal = function(){
+		if(!this.root){
+			return false;
+		}
+		if(this.root.right && !this.root.left && this.root.right.right){
+			//rotate left
+			this.root.right.left = this.root;
+			this.root = this.root.right;
+			this.root.left.right = null;
+			return;
+		}
+				   // root 20
+			// left 15
+		// left 10
+		if(this.root.left && !this.root.right && this.root.left.left){
+			// rotate right
+			this.root
+		}
+	}
+
 	//When a user wants to find out if the tree is empty, we'll return either true (is empty) or false (not empty)
 	this.isEmpty = function(){
 		//if the root is null, the tree is empty and return true, it is empty
@@ -11,6 +35,32 @@ function BST(){
 		}
 		//otherwise, return false, because the tree has a root.
 		return false;
+	}
+	this.size = function(){
+		if(this.root){
+			return this.root.size();
+		}
+		return 0;
+	}
+	this.findvals = function(){
+		if(!this.root){
+			return 0;
+		}
+		return this.root.findvals();
+	}
+	this.isValid = function(){
+		if(this.isEmpty()){
+			return "Empty tree";
+		}
+		if(this.root.left && this.root.right){
+			if(this.root.left.isValidLeft(this.root.val) && this.root.right.isValidRight(this.root.val)){
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return "Gonna do this later";
 	}
 
 	//When a user wants to add a value to the tree, the user will provide the value to be added
@@ -87,14 +137,14 @@ function BST(){
 			var parentnode = new Node();
 			parentnode.left = this.root;
 			// now we'll call the remove function on the root, and pass in parentnode as the parent
-			
+
 			this.root.remove(val, parentnode);
-			
+
 			// after this function runs, we'll have some other node as the parentnode's left child. Whatever it is, it's our new root.
-		
+
 			this.root = parentnode.left;
-	
-			
+
+
 		}
 		else {
 			// if the user does not want to remove the tree's root, then we'll just call the remove function on the root
@@ -117,7 +167,7 @@ function BST(){
 		return this.root.traverse();
 	}
 
-	// This is a starter for when the user wants to rebalance the tree. In this case, we'll be able to handle a few cases: 
+	// This is a starter for when the user wants to rebalance the tree. In this case, we'll be able to handle a few cases:
 	// 1. If we find a node that has a height of 2 on the right and 0 on the left
 	// 		1a. If we find node -> right -> right (and that's it, no other children nodes anywhere)
 	//			This case would require a rotateLeft
@@ -147,6 +197,75 @@ function Node(val){
 	this.val = val;
 	this.left = null;
 	this.right = null;
+	this.findvals = function(){
+		var left = 0;
+		var right = 0;
+		if(this.left){
+			left = this.left.findvals();
+		}
+		if(this.right){
+			right = this.right.findvals();
+		}
+		return 1 + left + right;
+	}
+	this.size = function(){
+		if(!this.left && !this.right){
+			return 1;
+		}
+		else if(!this.left){
+			return 1 + this.right.size();
+		}
+		else if(!this.right){
+			return 1 + this.left.size();
+		}
+		else{
+			return 1 + this.right.size() + this.left.size();
+		}
+	}
+	this.isValidLeft = function(maxval){
+		if(this.val > maxval){
+			return false;
+		}
+		if(this.left){
+			if(this.left.val < this.val && this.left.val < maxval){
+				this.left.isValidLeft(maxval);
+			}
+			else {
+				return false;
+			}
+		}
+		if(this.right){
+			if(this.right.val > this.val && this.right.val < maxval){
+				this.right.isValidLeft(maxval);
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
+	}
+	this.isValidRight = function(minval){
+		if(this.val < minval){
+			return false;
+		}
+		if(this.left){
+			if(this.left.val < this.val && this.left.val >= minval){
+				this.left.isValidRight(minval);
+			}
+			else {
+				return false;
+			}
+		}
+		if(this.right){
+			if(this.right.val >= this.val && this.right.val >= minval){
+				this.right.isValidRight(minval);
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
+	}
 	//when someone calls on the bst to insert a value, the bst passes this job on to the nodes
 	this.insert = function(val){
 		//check if the value to insert is less than the current node's value
@@ -220,7 +339,7 @@ function Node(val){
 	}
 	//We're using the height function for two different purposes: To either return the height of the longest branch of the tree, or to determine whether the tree is balanced.
 	// For a tree to be balanced, each node must be balanced, meaning that the height on the left and right cannot differ by more than 1.
-	//When someone calls on the bst to find the height, the bst call's on the root node's height function without passing an argument
+	//When someone calls on the bst to find the height, the bst calls on the root node's height function without passing an argument
 	//When someone calls on the bst to find out if it's balanced or not, the bst passes this job on to its root's height function with an argument
 	this.height = function(bal){
 		// we'll keep count of the lefts and rights, starting the count off at 0
@@ -228,12 +347,12 @@ function Node(val){
 		var right = 0;
 		// when there's a left node
 		if(this.left){
-			// TO FIND THE HEIGHT:  
+			// TO FIND THE HEIGHT:
 			if(bal === undefined){
 				// if there's something to the left, this ups our left count to 1, plus whatever height that left node has
 				left = 1 + this.left.height();
 			}
-			// TO FIND OUT IF IT'S BALANCED: 
+			// TO FIND OUT IF IT'S BALANCED:
 			else {
 				//we'll try running the height function with "balancing" as an argument on the left. If it returns "unbalanced", we know that there was an unbalanced node somewhere, so the whole tree is unbalanced. We won't care about the height anymore, just return "unbalanced".
 				if(this.left.height("balancing") == "unbalanced") {
@@ -246,7 +365,7 @@ function Node(val){
 		// when there's a right node
 		if(this.right){
 			// TO FIND THE HEIGHT:
-			
+
 			if(bal === undefined){
 				// if there's a node to the right, this ups our right count to 1, plus whatever height that right one has
 				right = 1 + this.right.height();
@@ -262,7 +381,7 @@ function Node(val){
 				// if we don't get false back, we got the height back. So we'll make our right count 1 plus whatever height was just returned.
 				right = 1 + this.right.height("balancing");
 			}
-			
+
 		}
 		// at the end, we'll need to return the height, which is the max between left and right
 
@@ -273,7 +392,7 @@ function Node(val){
 		}
 		// TO FIND OUT IF IT'S BALANCED:
 		else {
-			
+
 			// before we know what we want to return, we'll check if our difference between left and right is bigger than 1
 			if(Math.abs(left-right) > 1){
 				// if the difference is bigger than 1, we're unbalanced. Return "unbalanced"
@@ -302,7 +421,7 @@ function Node(val){
 				// if there is no right node, that means the user passed in a value that does not exist in our tree
 				return "Value not found."
 			}
-			
+
 		}
 		else if(this.val > val){
 			//check to make sure we are able to continue
@@ -403,28 +522,28 @@ function Node(val){
 	this.rebalance = function(){
 		//Check for the first situation, node -> right -> right
 		if(this.right && this.right.right && !this.left && !this.right.left){
-			// in this case, we know we'll need to do a rotateLeft 
-			
+			// in this case, we know we'll need to do a rotateLeft
+
 			this.rotateLeft();
 			// we're done here, no need to continue on with the rest of the function, so return
 			return
 		}
 		// Check for the second situation, node -> right -> left
 		else if(this.right && this.right.left && !this.left && !this.right.right){
-			
+
 			this.rotateRightLeft();
 			// we're done here
 			return
 		}
 		// Check for the third situation, node -> left -> left
 		else if(this.left && this.left.left && !this.right && !this.left.right){
-			
+
 			this.rotateRight();
 			return
 		}
 		// Check for the fourth situation, node -> left -> right
 		else if (this.left && this.left.right && !this.right && !this.left.left){
-		
+
 			this.rotateLeftRight();
 			return;
 		}
@@ -435,12 +554,12 @@ function Node(val){
 		if(this.right){
 			this.right.rebalance();
 		}
-		
-		
+
+
 	}
 	// this function is only called when we have node -> right -> right
 	this.rotateLeft = function(){
-		// First, we'll make the node's right child it's left child as well.
+		// First, we'll make the node's right child its left child as well.
 		this.left = this.right;
 		// Second, we'll reassing the node's right to be its right's right
 		this.right = this.right.right;
@@ -456,7 +575,7 @@ function Node(val){
 	}
 	// this function is only called when we have node->left->left
 	this.rotateRight = function(){
-		//First, we'll make the node's left child it's right child as well
+		//First, we'll make the node's left child its right child as well
 		this.right = this.left;
 		//Second, we'll reassign the node's node's left child to be its left's left
 		this.left = this.left.left;
@@ -480,7 +599,7 @@ function Node(val){
 		this.right.left = null;
 		// so at this point we just have node -> right -> right and the values are all in order. So we want to do a rotate left!
 		this.rotateLeft();
-		return; 
+		return;
 	}
 	// this function is only called when we have node -> left -> right
 	this.rotateLeftRight = function(){
@@ -500,11 +619,27 @@ function Node(val){
 }
 
 var myBST = new BST();
-myBST.insert(50).insert(40).insert(60).insert(70).insert(80);
-console.log(myBST.traverse());
-console.log(myBST.isBalanced());
-myBST.rebalance();
-console.log(myBST.isBalanced())
+myBST.insert(50).insert(30).insert(60).insert(61).insert(33)
+console.log("got my bst vals", myBST.findvals());
 
+// .insert(40).insert(60).insert(70).insert(80);
 
+var sizeBST = new BST();
+sizeBST.insert(6).insert(3).insert(4).insert(8).insert(9).insert(12).insert(2).insert(15).insert(1);
 
+console.log("balancing", sizeBST.isBalanced());
+console.log("should be balanced", myBST.isBalanced())
+var yourBST = new BST();
+yourBST.root = new Node(50);
+yourBST.root.left = new Node(25);
+yourBST.root.right = new Node(55);
+yourBST.root.right.left = new Node(35);
+// console.log(yourBST.isValid());
+console.log(sizeBST.size());
+console.log(yourBST.traverse())
+
+function foo() {
+	for (var i = 0; i < arguments.length; i++) {
+	  console.log(arguments[i]);
+	}
+  }

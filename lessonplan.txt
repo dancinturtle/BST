@@ -1,0 +1,8 @@
+Binary search trees
+
+Day 1: What is a binary search tree, add to a binary search tree, find out if a value is in the bst
+Day 2: Demo how to do the add by putting the method on the node
+Find min and max of a binary search tree, how many nodes are in the bst
+Day 3: Traversals
+Day 4: Height, is balanced 
+Day 5: Remove
